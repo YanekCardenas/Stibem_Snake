@@ -55,7 +55,42 @@ canvas {
     transition: background 0.2s;
 }
 .overlay button:hover { background: #633200; }
-#deathScreen, #boardScreen { display: none; }
+#deathScreen, #boardScreen, #skinsScreen { display: none; }
+.wallet { font-size: 18px; opacity: 0.85; margin: 14px 0 0; }
+#skinList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 150px);
+    gap: 12px;
+    justify-content: center;
+    margin: 18px 0;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.skin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 3px solid var(--rarity);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+.skin img { width: 74px; height: 74px; object-fit: contain; }
+.skin .rarity { color: var(--rarity); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.skin .state { opacity: 0.9; }
+.skin.active { background: rgba(255,255,255,0.22); }
+.skin.locked { opacity: 0.45; cursor: not-allowed; }
+.skin.comun { --rarity: #b0b0b0; }
+.skin.poco { --rarity: #5fd35f; }
+.skin.raro { --rarity: #4aa3ff; }
+.skin.epico { --rarity: #b96bff; }
+.skin.legendario { --rarity: #ffa640; }
+.skin.mitico { --rarity: #ff5c5c; }
+#coinsEarned { font-size: 18px; margin: 0 0 6px; color: #ffd166; }
 .menu-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 .overlay button:disabled { opacity: 0.4; cursor: default; }
 #nameInput {

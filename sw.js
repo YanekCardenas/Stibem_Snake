@@ -1,17 +1,22 @@
-const CACHE = 'stibem-v3';
+const CACHE = 'stibem-v5';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './game.js',
     './manifest.json',
-    './Stibem.PNG',
-    './Pollito lico.PNG',
-    './Fondo.jpg',
-    './Stibem come.m4a',
-    './Stibem muere.m4a',
-    './Stibem que que.m4a',
-    './Niggersong.mp4'
+    './Skins/Stibem.PNG',
+    './Skins/Stibem_lowres.PNG',
+    './Skins/Stibem_calvo.PNG',
+    './Skins/Stibem_dormido.PNG',
+    './Skins/Stibem_jabonoso.PNG',
+    './Skins/Stibem_bandolero.PNG',
+    './Comidita/Pollito lico.PNG',
+    './Fondos/KFC.jpg',
+    './Sonidos/Stibem come.m4a',
+    './Sonidos/Stibem muere.m4a',
+    './Sonidos/Stibem que que.m4a',
+    './Canciones/Niggersong.mp4'
 ];
 
 self.addEventListener('install', e => {

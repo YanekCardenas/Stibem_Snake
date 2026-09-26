@@ -17,9 +17,17 @@
             <p id="nameError" class="error"></p>
             <div class="menu-buttons">
                 <button id="startBtn">Jugar</button>
-                <button id="skinsBtn" disabled>Skins (pronto)</button>
+                <button id="skinsBtn">Skins</button>
                 <button id="boardBtn">Puntajes</button>
             </div>
+            <p class="wallet">Pollitas: <b id="coinCount">0</b></p>
+        </div>
+
+        <div id="skinsScreen" class="overlay">
+            <h1>Skins de Stibem</h1>
+            <p class="wallet">Pollitas: <b id="coinCountSkins">0</b></p>
+            <div id="skinList"></div>
+            <button class="backBtn">Volver</button>
         </div>
 
         <div id="boardScreen" class="overlay">
@@ -31,6 +39,7 @@
         <div id="deathScreen" class="overlay">
             <h1>Stibem no consiguió comer pollita hasta saciarse</h1>
             <p id="finalScore"></p>
+            <p id="coinsEarned"></p>
             <p id="saveStatus"></p>
             <div class="menu-buttons">
                 <button id="retryBtn">Volver a intentar</button>

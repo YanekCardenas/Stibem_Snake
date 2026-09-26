@@ -11,7 +11,11 @@ const nameError = document.getElementById('nameError');
 const boardScreen = document.getElementById('boardScreen');
 const boardList = document.getElementById('boardList');
 const finalScore = document.getElementById('finalScore');
+const coinsEarned = document.getElementById('coinsEarned');
 const saveStatus = document.getElementById('saveStatus');
+const skinsScreen = document.getElementById('skinsScreen');
+const skinList = document.getElementById('skinList');
+const coinCounters = document.querySelectorAll('#coinCount, #coinCountSkins');
 
 // Pega aquí los datos de tu proyecto de Supabase (Project Settings → API)
 const SUPABASE_URL = 'https://inkszzynnrbbfbeemxbn.supabase.co';
@@ -22,6 +26,28 @@ const API_HEADERS = { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' }
 let playerName = '';
 try { playerName = localStorage.getItem('playerName') || ''; } catch {}
 nameInput.value = playerName;
+
+const SKINS = [
+    { id: 'base', name: 'Stibem', file: 'Skins/Stibem.PNG', rarity: 'comun', price: 0 },
+    { id: 'lowres', name: 'Stibem Lowres', file: 'Skins/Stibem_lowres.PNG', rarity: 'poco', price: 200 },
+    { id: 'calvo', name: 'Stibem Calvo', file: 'Skins/Stibem_calvo.PNG', rarity: 'raro', price: 500 },
+    { id: 'dormido', name: 'Stibem Dormido', file: 'Skins/Stibem_dormido.PNG', rarity: 'epico', price: 1200 },
+    { id: 'jabonoso', name: 'Stibem Jabonoso', file: 'Skins/Stibem_jabonoso.PNG', rarity: 'legendario', price: 2500 },
+    { id: 'bandolero', name: 'Stibem Bandolero', file: 'Skins/Stibem_bandolero.PNG', rarity: 'mitico', price: 5000 }
+];
+const RARITY_NAMES = { comun: 'Común', poco: 'Poco común', raro: 'Raro', epico: 'Épico', legendario: 'Legendario', mitico: 'Mítico' };
+
+const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); } catch { return fallback; } },
+    set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
+};
+
+let coins = store.get('coins', 0);
+let unlockedSkins = store.get('unlockedSkins', ['base']);
+let currentSkin = SKINS.find(s => s.id === store.get('skin', 'base') && unlockedSkins.includes(s.id)) || SKINS[0];
+
+function updateCoins() { coinCounters.forEach(el => { el.textContent = coins; }); }
+updateCoins();
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
 const gridSize = isMobile ? 50 : 60;
@@ -43,14 +69,14 @@ let snake = [{ x: startX, y: startY }];
 let prevSnake = [{ x: startX, y: startY }];
 let food = { x: 15, y: 15 };
 
-const headImg = new Image(); headImg.src = 'Stibem.PNG';
-const foodImg = new Image(); foodImg.src = 'Pollito lico.PNG';
-const bgImg = new Image(); bgImg.src = 'Fondo.jpg';
+const headImg = new Image(); headImg.src = currentSkin.file;
+const foodImg = new Image(); foodImg.src = 'Comidita/Pollito lico.PNG';
+const bgImg = new Image(); bgImg.src = 'Fondos/KFC.jpg';
 
-const soundEat = new Audio('Stibem come.m4a'); soundEat.volume = 1.0;
-const soundDie = new Audio('Stibem muere.m4a'); soundDie.volume = 1.0;
-const soundQue = new Audio('Stibem que que.m4a'); soundQue.volume = 1.0;
-const bgMusic = new Audio('Niggersong.mp4');
+const soundEat = new Audio('Sonidos/Stibem come.m4a'); soundEat.volume = 1.0;
+const soundDie = new Audio('Sonidos/Stibem muere.m4a'); soundDie.volume = 1.0;
+const soundQue = new Audio('Sonidos/Stibem que que.m4a'); soundQue.volume = 1.0;
+const bgMusic = new Audio('Canciones/Niggersong.mp4');
 bgMusic.loop = true;
 bgMusic.volume = isMobile ? 0.05 : 0.2;
 
@@ -80,13 +106,52 @@ function startGame() {
     bgMusic.play().catch(() => {});
     startAutoMovement();
     lastTickTime = performance.now();
-    requestAnimationFrame(renderLoop);
     gameLoop();
     if (isMobile) arrows.style.display = 'grid';
 }
 
 function showOnly(screen) {
-    [menu, boardScreen, deathScreen].forEach(s => { s.style.display = s === screen ? 'flex' : 'none'; });
+    [menu, boardScreen, deathScreen, skinsScreen].forEach(s => { s.style.display = s === screen ? 'flex' : 'none'; });
+}
+
+function renderSkins() {
+    skinList.replaceChildren();
+    SKINS.forEach(skin => {
+        const owned = unlockedSkins.includes(skin.id);
+        const card = document.createElement('button');
+        card.className = 'skin ' + skin.rarity;
+        if (skin === currentSkin) card.classList.add('active');
+        if (!owned && coins < skin.price) card.classList.add('locked');
+
+        const img = document.createElement('img');
+        img.src = skin.file;
+        img.alt = skin.name;
+        const name = document.createElement('b');
+        name.textContent = skin.name;
+        const rarity = document.createElement('span');
+        rarity.className = 'rarity';
+        rarity.textContent = RARITY_NAMES[skin.rarity];
+        const state = document.createElement('span');
+        state.className = 'state';
+        state.textContent = skin === currentSkin ? 'En uso' : owned ? 'Usar' : skin.price + ' pollitas';
+        card.append(img, name, rarity, state);
+
+        card.addEventListener('click', () => {
+            if (!owned) {
+                if (coins < skin.price) return;
+                coins -= skin.price;
+                unlockedSkins.push(skin.id);
+                store.set('coins', coins);
+                store.set('unlockedSkins', unlockedSkins);
+                updateCoins();
+            }
+            currentSkin = skin;
+            store.set('skin', skin.id);
+            headImg.src = skin.file;
+            renderSkins();
+        });
+        skinList.append(card);
+    });
 }
 
 startBtn.addEventListener('click', () => {
@@ -101,6 +166,7 @@ startBtn.addEventListener('click', () => {
 });
 retryBtn.addEventListener('click', () => { showOnly(null); resetGame(); startGame(); });
 document.getElementById('boardBtn').addEventListener('click', () => { showOnly(boardScreen); loadBoard(); });
+document.getElementById('skinsBtn').addEventListener('click', () => { showOnly(skinsScreen); renderSkins(); });
 document.querySelectorAll('.backBtn').forEach(b => b.addEventListener('click', () => showOnly(menu)));
 
 async function saveScore() {
@@ -147,7 +213,11 @@ function gameLoop() {
         soundDie.play().catch(() => {});
         gameStarted = false;
         if (isMobile) arrows.style.display = 'none';
+        coins += score;
+        store.set('coins', coins);
+        updateCoins();
         finalScore.textContent = `${playerName}, comiste ${score} pollitas`;
+        coinsEarned.textContent = `Guardaste ${score} pollitas · Tienes ${coins}`;
         showOnly(deathScreen);
         saveScore();
         return;
@@ -165,7 +235,7 @@ function gameLoop() {
 }
 
 function renderLoop(now) {
-    if (gameStarted || (deathScreen.style.display === 'none' && menu.style.display === 'none')) {
+    if (gameStarted) {
         const elapsed = now - lastTickTime;
         const t = Math.min(elapsed / tickRate, 1);
         clearCanvas();
@@ -271,6 +341,7 @@ if (isMobile) {
 }
 
 createFood();
+requestAnimationFrame(renderLoop);
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
