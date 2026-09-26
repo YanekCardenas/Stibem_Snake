@@ -1,4 +1,4 @@
-const CACHE = 'stibem-v5';
+const CACHE = 'stibem-v6';
 const ASSETS = [
     './',
     './index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
     './Comidita/Pollito lico.PNG',
     './Fondos/KFC.jpg',
     './Sonidos/Stibem come.m4a',
+    './Sonidos/Mas pollita stibem.m4a',
     './Sonidos/Stibem muere.m4a',
     './Sonidos/Stibem que que.m4a',
     './Canciones/Niggersong.mp4'

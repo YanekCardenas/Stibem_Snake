@@ -76,6 +76,34 @@ const bgImg = new Image(); bgImg.src = 'Fondos/KFC.jpg';
 const soundEat = new Audio('Sonidos/Stibem come.m4a'); soundEat.volume = 1.0;
 const soundDie = new Audio('Sonidos/Stibem muere.m4a'); soundDie.volume = 1.0;
 const soundQue = new Audio('Sonidos/Stibem que que.m4a'); soundQue.volume = 1.0;
+const soundMas = new Audio('Sonidos/Mas pollita stibem.m4a'); soundMas.volume = 1.0;
+
+// Stibem's voice lines never overlap: a new one waits for the current one to finish.
+const soundQueue = [];
+let currentSound = null;
+[soundEat, soundDie, soundQue, soundMas].forEach(a => a.addEventListener('ended', playNextSound));
+
+function playNextSound() {
+    currentSound = soundQueue.shift() || null;
+    if (!currentSound) return;
+    currentSound.currentTime = 0;
+    currentSound.play().catch(playNextSound);
+}
+
+function playSound(sound) {
+    if (currentSound) {
+        if (soundQueue.length < 2) soundQueue.push(sound);
+        return;
+    }
+    soundQueue.push(sound);
+    playNextSound();
+}
+
+function stopSounds() {
+    soundQueue.length = 0;
+    if (currentSound) { currentSound.pause(); currentSound = null; }
+}
+
 const bgMusic = new Audio('Canciones/Niggersong.mp4');
 bgMusic.loop = true;
 bgMusic.volume = isMobile ? 0.05 : 0.2;
@@ -118,6 +146,7 @@ function startAutoMovement() {
 
 function startGame() {
     gameStarted = true;
+    lastQueTime = Date.now();
     bgMusic.play().catch(() => {});
     startAutoMovement();
     lastTickTime = performance.now();
@@ -224,8 +253,8 @@ function gameLoop() {
     if (!gameStarted) return;
     if (didGameEnd()) {
         bgMusic.pause();
-        soundDie.currentTime = 0;
-        soundDie.play().catch(() => {});
+        stopSounds();
+        playSound(soundDie);
         gameStarted = false;
         if (isMobile) arrows.style.display = 'none';
         coins += score;
@@ -237,13 +266,9 @@ function gameLoop() {
         saveScore();
         return;
     }
-    if (dx !== 0 || dy !== 0) {
-        const now = Date.now();
-        if (now - lastQueTime > 10000 && Math.random() < 0.05) {
-            soundQue.currentTime = 0;
-            soundQue.play().catch(() => {});
-            lastQueTime = now;
-        }
+    if (Date.now() - lastQueTime >= 60000) {
+        lastQueTime = Date.now();
+        playSound(soundQue);
     }
     advanceSnake();
     setTimeout(gameLoop, tickRate);
@@ -310,8 +335,7 @@ function advanceSnake() {
         score += 1;
         scoreElement.textContent = 'Pollas comidas: ' + score;
         createFood();
-        soundEat.currentTime = 0;
-        soundEat.play().catch(() => {});
+        playSound(score % 10 === 0 ? soundMas : soundEat);
     } else {
         snake.pop();
     }
