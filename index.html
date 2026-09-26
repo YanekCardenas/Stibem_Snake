@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Stibem Snake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4B2500">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="menu" class="overlay">
+            <h1>Stibem tiene hambre y se le acabo el penesito, ayudalo a conseguir su segunda comida favorita</h1>
+            <p style="margin-bottom: 20px; font-size: 18px; opacity: 0.8;">Controla a Stibem usando las teclas <b>W, A, S, D</b>, las <b>flechas</b> o las <b>flechas en pantalla</b></p>
+            <input id="nameInput" maxlength="16" placeholder="Tu nombre" autocomplete="off">
+            <p id="nameError" class="error"></p>
+            <div class="menu-buttons">
+                <button id="startBtn">Jugar</button>
+                <button id="skinsBtn" disabled>Skins (pronto)</button>
+                <button id="boardBtn">Puntajes</button>
+            </div>
+        </div>
+
+        <div id="boardScreen" class="overlay">
+            <h1>Mejores comedores de pollita</h1>
+            <ol id="boardList"></ol>
+            <button class="backBtn">Volver</button>
+        </div>
+
+        <div id="deathScreen" class="overlay">
+            <h1>Stibem no consiguió comer pollita hasta saciarse</h1>
+            <p id="finalScore"></p>
+            <p id="saveStatus"></p>
+            <div class="menu-buttons">
+                <button id="retryBtn">Volver a intentar</button>
+                <button class="backBtn">Menú</button>
+            </div>
+        </div>
+
+        <div id="score">Pollas comidas: 0</div>
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="arrows">
+            <button class="up" data-dir="0,-1">▲</button>
+            <button class="left" data-dir="-1,0">◀</button>
+            <button class="right" data-dir="1,0">▶</button>
+            <button class="down" data-dir="0,1">▼</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #111;
+    overflow: hidden;
+    font-family: sans-serif;
+    touch-action: none;
+}
+canvas {
+    border: 5px solid #333;
+    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    background-color: rgba(0,0,0,0.5);
+    background-blend-mode: multiply;
+    max-width: 98vw;
+    max-height: 98vh;
+    object-fit: contain;
+}
+#score {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px #000;
+    z-index: 1;
+}
+.overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    z-index: 10;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.overlay h1 { font-size: 28px; margin-bottom: 20px; }
+.overlay button {
+    padding: 12px 24px;
+    font-size: 20px;
+    cursor: pointer;
+    background: #4B2500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+.overlay button:hover { background: #633200; }
+#deathScreen, #boardScreen { display: none; }
+.menu-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.overlay button:disabled { opacity: 0.4; cursor: default; }
+#nameInput {
+    font-size: 20px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    border: 2px solid #4B2500;
+    text-align: center;
+    width: 220px;
+    max-width: 80vw;
+}
+.error { color: #ff7070; min-height: 1.2em; margin: 8px 0; }
+#boardList { font-size: 22px; text-align: left; min-width: 240px; max-width: 90vw; margin: 0 0 24px; padding-left: 32px; }
+#boardList li { padding: 4px 0; overflow-wrap: anywhere; }
+#boardList .me { color: #ffb347; font-weight: bold; }
+#boardList .muted { list-style: none; opacity: 0.7; margin-left: -32px; text-align: center; }
+#finalScore { font-size: 22px; margin: 0 0 6px; }
+#saveStatus { opacity: 0.7; min-height: 1.2em; margin: 0 0 20px; }
+
+/* On-screen arrows */
+#arrows {
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    grid-template-areas: ". up ." "left . right" ". down .";
+    gap: 6px;
+}
+#arrows button {
+    font-size: 26px;
+    color: white;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 12px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+#arrows button:active { background: rgba(255,255,255,0.45); }
+#arrows .up { grid-area: up; }
+#arrows .left { grid-area: left; }
+#arrows .right { grid-area: right; }
+#arrows .down { grid-area: down; }

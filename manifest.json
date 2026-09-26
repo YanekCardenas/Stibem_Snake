@@ -1,0 +1,14 @@
+{
+  "name": "Stibem Snake",
+  "short_name": "Stibem",
+  "description": "Ayuda a Stibem a conseguir su segunda comida favorita",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#4B2500",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "Stibem.PNG", "sizes": "192x192", "type": "image/png" },
+    { "src": "Stibem.PNG", "sizes": "512x512", "type": "image/png" }
+  ]
+}
