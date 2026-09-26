@@ -17,11 +17,12 @@ const skinsScreen = document.getElementById('skinsScreen');
 const skinList = document.getElementById('skinList');
 const coinCounters = document.querySelectorAll('#coinCount, #coinCountSkins');
 
-// Pega aquí los datos de tu proyecto de Supabase (Project Settings → API)
 const SUPABASE_URL = 'https://inkszzynnrbbfbeemxbn.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlua3N6enlubnJiYmZiZWVteGJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NzgzMTUsImV4cCI6MjEwNTU1NDMxNX0.LLWI_sVF7MdxwZrHYju1hFwWy6tepsjL_LEq05_hZqY';
-const API = SUPABASE_URL + '/rest/v1/scores';
 const API_HEADERS = { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' };
+const API_START = SUPABASE_URL + '/functions/v1/start-game';
+const API_SUBMIT = SUPABASE_URL + '/functions/v1/submit-score';
+let gameToken = null;
 
 let playerName = '';
 try { playerName = localStorage.getItem('playerName') || ''; } catch {}
@@ -127,6 +128,7 @@ let lastQueTime = 0;
 let lastTickTime = 0;
 
 function resetGame() {
+    startSession();
     score = 0; dx = 0; dy = 0; dirQueue = [];
     snake = [{ x: startX, y: startY }];
     prevSnake = [{ x: startX, y: startY }];
@@ -213,12 +215,24 @@ document.getElementById('boardBtn').addEventListener('click', () => { showOnly(b
 document.getElementById('skinsBtn').addEventListener('click', () => { showOnly(skinsScreen); renderSkins(); });
 document.querySelectorAll('.backBtn').forEach(b => b.addEventListener('click', () => showOnly(menu)));
 
+async function startSession() {
+    try {
+        const r = await fetch(API_START, { method: 'POST', headers: API_HEADERS });
+        const data = await r.json();
+        gameToken = data.token;
+    } catch {
+        gameToken = null;
+    }
+}
+
 async function saveScore() {
     if (!SUPABASE_KEY) { saveStatus.textContent = ''; return; }
+    if (!gameToken) { saveStatus.textContent = 'No se pudo guardar el puntaje'; return; }
     saveStatus.textContent = 'Guardando puntaje...';
     try {
-        const r = await fetch(API, { method: 'POST', headers: API_HEADERS, body: JSON.stringify({ name: playerName, score }) });
-        saveStatus.textContent = r.ok ? 'Puntaje guardado' : 'No se pudo guardar el puntaje';
+        const r = await fetch(API_SUBMIT, { method: 'POST', headers: API_HEADERS, body: JSON.stringify({ token: gameToken, name: playerName, score }) });
+        const data = await r.json();
+        saveStatus.textContent = (r.ok && !data.error) ? 'Puntaje guardado' : 'No se pudo guardar el puntaje';
     } catch {
         saveStatus.textContent = 'Sin conexión, no se guardó el puntaje';
     }
@@ -230,7 +244,7 @@ async function loadBoard() {
     if (!SUPABASE_KEY) return msg('El leaderboard aún no está configurado');
     msg('Cargando...');
     try {
-        const r = await fetch(API + '?select=name,score&order=score.desc&limit=200', { headers: API_HEADERS });
+        const r = await fetch(SUPABASE_URL + '/rest/v1/scores?select=name,score&order=score.desc&limit=200', { headers: API_HEADERS });
         const rows = await r.json();
         boardList.replaceChildren();
         const seen = new Set();
