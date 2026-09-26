@@ -57,7 +57,19 @@ Deno.serve(async (req) => {
       })
     }
 
-    await supabase.from('game_sessions').update({ used: true }).eq('id', token)
+    const { data: claimed } = await supabase
+      .from('game_sessions')
+      .update({ used: true })
+      .eq('id', token)
+      .eq('used', false)
+      .select('id')
+
+    if (!claimed?.length) {
+      return new Response(JSON.stringify({ error: 'Esta sesión ya se usó' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     const { error: insertError } = await supabase
       .from('scores')
