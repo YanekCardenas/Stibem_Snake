@@ -82,7 +82,7 @@ const soundMas = new Audio('Sonidos/Mas pollita stibem.m4a'); soundMas.volume = 
 // Stibem's voice lines never overlap: a new one waits for the current one to finish.
 const soundQueue = [];
 let currentSound = null;
-[soundEat, soundDie, soundQue, soundMas].forEach(a => a.addEventListener('ended', playNextSound));
+[soundDie, soundQue, soundMas].forEach(a => a.addEventListener('ended', playNextSound));
 
 function playNextSound() {
     currentSound = soundQueue.shift() || null;
@@ -350,7 +350,8 @@ function advanceSnake() {
         score += 1;
         scoreElement.textContent = 'Pollas comidas: ' + score;
         createFood();
-        playSound(score % 10 === 0 ? soundMas : soundEat);
+        if (score % 10 === 0) playSound(soundMas);
+        else soundEat.cloneNode().play().catch(() => {});
     } else {
         snake.pop();
     }
