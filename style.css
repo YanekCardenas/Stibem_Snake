@@ -57,6 +57,22 @@ canvas {
 .overlay button:hover { background: #633200; }
 #deathScreen, #boardScreen, #skinsScreen { display: none; }
 .wallet { font-size: 18px; opacity: 0.85; margin: 14px 0 0; }
+#musicBtn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 30;
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
+    line-height: 1;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.45);
+    color: white;
+    cursor: pointer;
+}
+#musicBtn.off { opacity: 0.5; }
 #credit {
     position: fixed;
     bottom: 8px;

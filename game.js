@@ -80,6 +80,21 @@ const bgMusic = new Audio('Canciones/Niggersong.mp4');
 bgMusic.loop = true;
 bgMusic.volume = isMobile ? 0.05 : 0.2;
 
+const musicBtn = document.getElementById('musicBtn');
+let musicOn = store.get('music', true);
+function updateMusic() {
+    bgMusic.muted = !musicOn;
+    musicBtn.textContent = musicOn ? '🔊' : '🔇';
+    musicBtn.classList.toggle('off', !musicOn);
+}
+updateMusic();
+musicBtn.addEventListener('click', () => {
+    musicOn = !musicOn;
+    store.set('music', musicOn);
+    updateMusic();
+    musicBtn.blur();
+});
+
 let lastQueTime = 0;
 let lastTickTime = 0;
 
