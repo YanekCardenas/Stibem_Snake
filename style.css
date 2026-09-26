@@ -57,6 +57,19 @@ canvas {
 .overlay button:hover { background: #633200; }
 #deathScreen, #boardScreen, #skinsScreen { display: none; }
 .wallet { font-size: 18px; opacity: 0.85; margin: 14px 0 0; }
+#credit {
+    position: fixed;
+    bottom: 8px;
+    left: 10px;
+    margin: 0;
+    z-index: 30;
+    color: white;
+    font-size: 12px;
+    opacity: 0.55;
+    text-shadow: 1px 1px 3px #000;
+    pointer-events: none;
+}
+.honor { font-size: 14px; opacity: 0.7; max-width: 420px; margin: 0 0 14px; }
 #skinList {
     display: grid;
     grid-template-columns: repeat(auto-fit, 150px);
