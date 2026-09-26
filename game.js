@@ -22,7 +22,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const API_HEADERS = { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' };
 const API_START = SUPABASE_URL + '/functions/v1/start-game';
 const API_SUBMIT = SUPABASE_URL + '/functions/v1/submit-score';
-let gameToken = null;
+let sessionPromise = Promise.resolve(null);
 
 let playerName = '';
 try { playerName = localStorage.getItem('playerName') || ''; } catch {}
@@ -128,7 +128,7 @@ let lastQueTime = 0;
 let lastTickTime = 0;
 
 function resetGame() {
-    startSession();
+    sessionPromise = startSession();
     score = 0; dx = 0; dy = 0; dirQueue = [];
     snake = [{ x: startX, y: startY }];
     prevSnake = [{ x: startX, y: startY }];
@@ -219,20 +219,21 @@ async function startSession() {
     try {
         const r = await fetch(API_START, { method: 'POST', headers: API_HEADERS });
         const data = await r.json();
-        gameToken = data.token;
+        return data.token || null;
     } catch {
-        gameToken = null;
+        return null;
     }
 }
 
 async function saveScore() {
     if (!SUPABASE_KEY) { saveStatus.textContent = ''; return; }
-    if (!gameToken) { saveStatus.textContent = 'No se pudo guardar el puntaje'; return; }
     saveStatus.textContent = 'Guardando puntaje...';
+    const gameToken = await sessionPromise;
+    if (!gameToken) { saveStatus.textContent = 'No se pudo guardar el puntaje'; return; }
     try {
         const r = await fetch(API_SUBMIT, { method: 'POST', headers: API_HEADERS, body: JSON.stringify({ token: gameToken, name: playerName, score }) });
         const data = await r.json();
-        saveStatus.textContent = (r.ok && !data.error) ? 'Puntaje guardado' : 'No se pudo guardar el puntaje';
+        saveStatus.textContent = (r.ok && !data.error) ? 'Puntaje guardado' : 'No se pudo guardar: ' + (data.error || r.status);
     } catch {
         saveStatus.textContent = 'Sin conexión, no se guardó el puntaje';
     }

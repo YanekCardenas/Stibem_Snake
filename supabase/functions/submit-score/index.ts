@@ -3,7 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
-const MAX_POINTS_PER_SECOND = 0.4
+const MAX_POINTS_PER_SECOND = 0.5
+const SCORE_GRACE = 10
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
     }
 
     const elapsedSeconds = (Date.now() - new Date(session.started_at).getTime()) / 1000
-    const maxPossibleScore = elapsedSeconds * MAX_POINTS_PER_SECOND
+    const maxPossibleScore = SCORE_GRACE + elapsedSeconds * MAX_POINTS_PER_SECOND
 
     if (score < 0 || score > maxPossibleScore) {
       return new Response(JSON.stringify({ error: 'Score no válido para el tiempo jugado' }), {
