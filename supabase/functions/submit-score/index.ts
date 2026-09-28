@@ -3,8 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
-const MAX_POINTS_PER_SECOND = 0.5
-const SCORE_GRACE = 10
+const MAX_POINTS_PER_SECOND = 0.6
+const SCORE_GRACE = 15
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
